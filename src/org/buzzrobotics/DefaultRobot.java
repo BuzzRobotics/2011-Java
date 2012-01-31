@@ -371,16 +371,16 @@ public class DefaultRobot extends IterativeRobot {
                 leftStick = new Joystick(elevatorJoystick);    //USB 2
             
             //Jaguar
-                robotJaguarFloorArm = new Jaguar(4, jaguarFloorArmPWM);
-                robotJaguarElevatorArm = new Jaguar(4, jaguarElevatorArmPWM);
+                robotJaguarFloorArm = new Jaguar(1, jaguarFloorArmPWM);
+                robotJaguarElevatorArm = new Jaguar(1, jaguarElevatorArmPWM);
 
             //Victor
-                roboVictorLateralDrive = new Victor(4, victorLateralDrivePWM);
+                roboVictorLateralDrive = new Victor(1, victorLateralDrivePWM);
                 
             //Encoders
-                robotEncoderLeftDrive = new Encoder(4, encoderLeftDriveSourceA, 4, encoderLeftDriveSourceB);
-                robotEncoderRightDrive = new Encoder(4, encoderRightDriveSourceA, 4, encoderRightDriveSourceB);
-                robotEncoderLateralDrive = new Encoder(4, encoderLateralDriveSourceA, 4, encoderLateralDriveSourceB);
+                robotEncoderLeftDrive = new Encoder(1, encoderLeftDriveSourceA, 1, encoderLeftDriveSourceB);
+                robotEncoderRightDrive = new Encoder(1, encoderRightDriveSourceA, 1, encoderRightDriveSourceB);
+                robotEncoderLateralDrive = new Encoder(1, encoderLateralDriveSourceA, 1, encoderLateralDriveSourceB);
     
             //D I/O
                 //Ultrasonic Sensor
@@ -393,14 +393,14 @@ public class DefaultRobot extends IterativeRobot {
 
             //Double Solenoids
                  //(Module 8)
-                    robotDoubleSolenoidMainElevator = new DoubleSolenoid(8, solenoidMainElevatorDeployPort, solenoidMainElevatorRetractPort);
-                    robotDoubleSolenoidElevatorUpDown4 = new DoubleSolenoid(8, solenoidElevatorUpDown4DeployPort, solenoidElevatorUpDown4RetractPort);
-                    robotDoubleSolenoidTubeGrabber = new DoubleSolenoid(8, solenoidTubeGrabberDeployPort, solenoidTubeGrabberRetractPort);
+                    robotDoubleSolenoidMainElevator = new DoubleSolenoid(2, solenoidMainElevatorDeployPort, solenoidMainElevatorRetractPort);
+                    robotDoubleSolenoidElevatorUpDown4 = new DoubleSolenoid(2, solenoidElevatorUpDown4DeployPort, solenoidElevatorUpDown4RetractPort);
+                    robotDoubleSolenoidTubeGrabber = new DoubleSolenoid(2, solenoidTubeGrabberDeployPort, solenoidTubeGrabberRetractPort);
                  //(Module 7)
-                    robotSolenoidLateralDrive = new Solenoid(7, solenoidLateralPort);   //single acting
-                    robotSolenoidMinibotDeploy = new Solenoid(7, solenoidMiniBotDeployPort);
-                    robotDoubleSolenoidMinibotArmSolenoidOne = new DoubleSolenoid(7, solenoidMiniBotArmFirstSolenoidDeployPort, solenoidMiniBotArmFirstSolenoidRetractPort);
-                    robotDoubleSolenoidFloorGrabber = new DoubleSolenoid(7, solenoidFloorGrabberDeployPort, solenoidFloorGrabberRetractPort);
+                    robotSolenoidLateralDrive = new Solenoid(1, solenoidLateralPort);   //single acting
+                    robotSolenoidMinibotDeploy = new Solenoid(1, solenoidMiniBotDeployPort);
+                    robotDoubleSolenoidMinibotArmSolenoidOne = new DoubleSolenoid(1, solenoidMiniBotArmFirstSolenoidDeployPort, solenoidMiniBotArmFirstSolenoidRetractPort);
+                    robotDoubleSolenoidFloorGrabber = new DoubleSolenoid(1, solenoidFloorGrabberDeployPort, solenoidFloorGrabberRetractPort);
 //                    robotDoubleSolenoidTubeGrabber = new DoubleSolenoid(7,7,8); //bread board code ONLY
                     
             //Analogs --- (Slot 1 on cRIO)
@@ -547,9 +547,7 @@ public class DefaultRobot extends IterativeRobot {
 
 
     
-/********************************** Periodic Routines *************************************/
-static int printSec = (int)((Timer.getUsClock() / 1000000.0) + 1.0);    //Just getting the time...in seconds
-static final int startSec = (int)(Timer.getUsClock() / 1000000.0);
+/********************************** Periodic Routines *************************************
 
     public void disabledPeriodic()  {
            Watchdog.getInstance().feed();
@@ -905,7 +903,6 @@ static final int startSec = (int)(Timer.getUsClock() / 1000000.0);
                 //Stop autonomous from running in teleop
                 autoMode = 0;
                 //Call the camera method  to begin running the camera code
-                    camera(7);
 
                 //Get our field time so we dont deploy minibot early
                     fluxCapacitor = Timer.getFPGATimestamp() - fluxCapacitorZero; //keep track of time so we know when to deploy the minibot
@@ -1500,28 +1497,6 @@ static final int startSec = (int)(Timer.getUsClock() / 1000000.0);
                         else {
                             robotJaguarFloorArm.set(0);  //stop the floor arm
                         }
-    }
-    
-/********************************** Camera (Axis...) *************************************/
-//Camera code
-
-    public void camera(int channelnum){
-            Watchdog.getInstance().feed();
-
-        try {
-            if (robotCamera.freshImage()) {
-            ColorImage image = robotCamera.getImage();
-            Thread.yield();
-            Thread.yield();
-            image.free();
-
-            }
-            
-        } catch (NIVisionException ex) {
-            ex.printStackTrace();
-        } catch (AxisCameraException ex) {
-            ex.printStackTrace();
-        }
     }
 
     int GetLoopsPerSec() {
